@@ -23,32 +23,38 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                bat 'cd OTP1_inclass_assignment && mvn clean test'
+                dir('OTP1_inclass_assignment') {
+                    bat 'mvn clean test'
+                }
             }
         }
 
         stage('Code Coverage') {
             steps {
-                bat 'cd OTP1_inclass_assignment && mvn jacoco:report'
+                dir('OTP1_inclass_assignment') {
+                    bat 'mvn jacoco:report'
+                }
             }
         }
 
         stage('Publish Test Results') {
             steps {
-                junit '**/target/surefire-reports/*.xml'
+                junit 'OTP1_inclass_assignment/target/surefire-reports/*.xml'
             }
         }
 
         stage('Publish Coverage Report') {
             steps {
-                jacoco()
+                jacoco(execPattern: 'OTP1_inclass_assignment/target/jacoco.exec')
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    docker.build("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}")
+                dir('OTP1_inclass_assignment') {
+                    script {
+                        docker.build("${DOCKERHUB_REPO}:${DOCKER_IMAGE_TAG}")
+                    }
                 }
             }
         }
@@ -64,6 +70,7 @@ pipeline {
         }
 
     }
+
     post {
         always {
             cleanWs()
