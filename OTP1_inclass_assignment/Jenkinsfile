@@ -23,13 +23,13 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                bat 'mvn clean test'
+                bat 'cd OTP1_inclass_assignment && mvn clean test'
             }
         }
 
         stage('Code Coverage') {
             steps {
-                bat 'mvn jacoco:report'
+                bat 'cd OTP1_inclass_assignment && mvn jacoco:report'
             }
         }
 
